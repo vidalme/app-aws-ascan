@@ -42,4 +42,11 @@ jobs:
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:latest
 
-
+      # - name: Trigger workflow in another repository
+      #   uses: peter-evans/repository-dispatch@v2
+      #   with:
+      #     token: ${{ secrets.PAT_TOKEN }}
+      #     repository: vidalme/infra-aws-ascan
+      #     event-type: ascan-image-built
+      #     client-payload: '{"image_tag": "${{ github.sha }}", "ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+  
