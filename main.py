@@ -52,7 +52,7 @@ def read_root():
 
 @app.get('/todos',response_model=List[Todo])
 def get_todos():
-    return table.scan()["Items"]
+    return table.scan()
 
 @app.get('/todos/{id}', response_model=Todo)
 def get_todo( id: int ):
