@@ -2,17 +2,26 @@ import sys
 def handler(event, context):
     return 'Hello from AWS Lambda using Python' + sys.version + '!'
     
-# from enum import IntEnum
-# from typing import Optional, List
-# from fastapi import FastAPI, HTTPException
-# from pydantic import BaseModel, Field
-# from mangum import Mangum
-# import boto3
-# from boto3.dynamodb.conditions import Key
+from enum import IntEnum
+from typing import Optional, List
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
+from mangum import Mangum
+import boto3
+from boto3.dynamodb.conditions import Key
 
-# api = FastAPI()
-# handler = Mangum(api)
+app = FastAPI()
 
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}
+
+
+@app.get("/items/{item_id}")
+def read_item(item_id: int, q: str = None):
+    return {"item_id": item_id, "q": q}
+
+handler = Mangum(app, lifespan="off")
 # class Priority(IntEnum):
 #     LOW = 3
 #     MEDIUM = 2
