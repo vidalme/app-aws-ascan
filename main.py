@@ -11,7 +11,7 @@ import boto3
 from boto3.dynamodb.conditions import Key
 
 app = FastAPI()
-
+handler = Mangum(app, lifespan="off")
 class Priority(IntEnum):
     LOW = 3
     MEDIUM = 2
@@ -42,6 +42,9 @@ all_todos = [
     Todo(id=5, title="Estudar Flask", done=False, priority=Priority.LOW),
 ]
 
+# Create a DynamoDB client using the default credentials and region
+dynamodb = boto3.resource("dynamodb")
+table = dynamodb.Table("todo-ascan-table")
 
 @app.get("/")
 def read_root():
@@ -49,11 +52,7 @@ def read_root():
 
 @app.get('/todos',response_model=List[Todo])
 def get_todos():
-    return all_todos
-
-# @app.get("/items/{item_id}")
-# def read_item(item_id: int, q: str = None):
-#     return {"item_id": item_id, "q": q}
+    return table.scan()["Items"]
 
 @app.get('/todos/{id}', response_model=Todo)
 def get_todo( id: int ):
@@ -81,7 +80,7 @@ def update_todo( id: int, update_todo: TodoUpdate):
     for todo in all_todos:
         if todo.id == id:
             if update_todo.title is not None:
-                todo.title = update_todo.title
+                todo.   title = update_todo.title
             if update_todo.done is not None:
                 todo.done = update_todo.done
             if update_todo.priority is not None:
@@ -97,4 +96,3 @@ def delete_todo( id: int ):
             return all_todos
     raise HTTPException(status_code=404, detail="Todo não encontrado")
 
-handler = Mangum(app, lifespan="off")
