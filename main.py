@@ -55,10 +55,10 @@ def get_todos():
 # def read_item(item_id: int, q: str = None):
 #     return {"item_id": item_id, "q": q}
 
-@app.get('/todos/{todo_id}', response_model=Todo)
-def get_todo( todo_id: int ):
+@app.get('/todos/{id}', response_model=Todo)
+def get_todo( id: int ):
     for todo in all_todos:
-        if todo.todo_id == todo_id:
+        if todo.id == id:
             return todo
         
 @app.post('/todos', response_model=List[Todo])
