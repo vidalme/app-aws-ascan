@@ -2,13 +2,13 @@ import sys
 def handler(event, context):
     return 'Hello from AWS Lambda using Python' + sys.version + '!'
     
-from enum import IntEnum
-from typing import Optional, List
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
-from mangum import Mangum
-import boto3
-from boto3.dynamodb.conditions import Key
+# from enum import IntEnum
+# from typing import Optional, List
+# from fastapi import FastAPI, HTTPException
+# from pydantic import BaseModel, Field
+# from mangum import Mangum
+# import boto3
+# from boto3.dynamodb.conditions import Key
 
 # api = FastAPI()
 # handler = Mangum(api)
