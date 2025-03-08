@@ -43,14 +43,19 @@ all_todos = [
 ]
 
 # Create a DynamoDB client using the default credentials and region
-dynamodb = boto3.client("dynamodb")
+
 
 # table = dynamodb.Table("todos")
 
 @app.get("/")
 def read_root():
-    response = dynamodb.list_tables()
-    return {"tables": response.get("TableNames", [])}
+    dynamodb = boto3.resource("dynamodb")
+    table = dynamodb.Table("todo-ascan-table")
+    response = table.get_item(Key={"TaskId": 1})
+    if "Item" in response:
+        return response["Item"]["Task"]
+    else:
+        return "Task not found" 
 
 @app.get('/todos',response_model=List[Todo])
 def get_todos():
