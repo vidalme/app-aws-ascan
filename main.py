@@ -43,8 +43,9 @@ all_todos = [
 ]
 
 # Create a DynamoDB client using the default credentials and region
-dynamodb = boto3.resource("dynamodb")
-table = dynamodb.Table("todo-ascan-table")
+dynamodb = boto3.client("dynamodb")
+# table = dynamodb.scan(TableName="todo-ascan-table")
+# table = dynamodb.Table("todo-ascan-table")
 
 @app.get("/")
 def read_root():
@@ -52,7 +53,7 @@ def read_root():
 
 @app.get('/todos',response_model=List[Todo])
 def get_todos():
-    return table.scan()
+    return dynamodb.scan(TableName="todo-ascan-table")
 
 @app.get('/todos/{id}', response_model=Todo)
 def get_todo( id: int ):
