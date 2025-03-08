@@ -7,44 +7,45 @@ from typing import Optional, List
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from mangum import Mangum
+import boto3
+from boto3.dynamodb.conditions import Key
 
+# api = FastAPI()
+# handler = Mangum(api)
 
-api = FastAPI()
-handler = Mangum(api)
+# class Priority(IntEnum):
+#     LOW = 3
+#     MEDIUM = 2
+#     HIGH = 1
 
-class Priority(IntEnum):
-    LOW = 3
-    MEDIUM = 2
-    HIGH = 1
+# class TodoBase(BaseModel):
+#     title: str = Field(..., min_length=3, max_length=50, description="Título da tarefa")
+#     done: bool = Field(default=False, description="Tarefa concluída ou não")
+#     priority: Priority = Field(default=Priority.LOW, description="Prioridade da tarefa")
 
-class TodoBase(BaseModel):
-    title: str = Field(..., min_length=3, max_length=50, description="Título da tarefa")
-    done: bool = Field(default=False, description="Tarefa concluída ou não")
-    priority: Priority = Field(default=Priority.LOW, description="Prioridade da tarefa")
+# class TodoCreate(TodoBase):
+#     pass
 
-class TodoCreate(TodoBase):
-    pass
+# class Todo(TodoBase):
+#     id: int = Field(..., description="Identificador da tarefa")
 
-class Todo(TodoBase):
-    id: int = Field(..., description="Identificador da tarefa")
+# class TodoUpdate(BaseModel):
+#     title: Optional[str] = Field(None, min_length=3, max_length=50, description="Título da tarefa")
+#     done: Optional[bool] = Field(None, description="Tarefa concluída ou não")
+#     priority: Optional[Priority] = Field(None, description="Prioridade da tarefa")
 
-class TodoUpdate(BaseModel):
-    title: Optional[str] = Field(None, min_length=3, max_length=50, description="Título da tarefa")
-    done: Optional[bool] = Field(None, description="Tarefa concluída ou não")
-    priority: Optional[Priority] = Field(None, description="Prioridade da tarefa")
-
-all_todos = [
-    Todo(id=1, title="Fazer compras", done=False, priority=Priority.HIGH),
-    Todo(id=2, title="Estudar FastAPI", done=False, priority=Priority.MEDIUM),
-    Todo(id=3, title="Estudar Python", done=False, priority=Priority.MEDIUM),s
-    Todo(id=4, title="Estudar Django", done=False, priority=Priority.HIGH),
-    Todo(id=5, title="Estudar Flask", done=False, priority=Priority.LOW),
-]
+# all_todos = [
+#     Todo(id=1, title="Fazer compras", done=False, priority=Priority.HIGH),
+#     Todo(id=2, title="Estudar FastAPI", done=False, priority=Priority.MEDIUM),
+#     Todo(id=3, title="Estudar Python", done=False, priority=Priority.MEDIUM),
+#     Todo(id=4, title="Estudar Django", done=False, priority=Priority.HIGH),
+#     Todo(id=5, title="Estudar Flask", done=False, priority=Priority.LOW),
+# ]
 
 
 # @api.get("/")
 # def index():
-#     return { "message": "Olá atlantico"}
+#     return { "message": "Olá ascanianos"}
 
 # @api.get('/todos',response_model=List[Todo])
 # def get_todos():
