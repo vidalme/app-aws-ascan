@@ -49,12 +49,8 @@ dynamodb = boto3.client("dynamodb")
 
 @app.get("/")
 def read_root():
-    valor = "uma string vinda de"
-    return {
-        "item1": valor,
-        "item2": "uma string normal",
-        "item3": dynamodb 
-        }
+    response = dynamodb.list_tables()
+    return {"tables": response.get("TableNames", [])}
 
 @app.get('/todos',response_model=List[Todo])
 def get_todos():
