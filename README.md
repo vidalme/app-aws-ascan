@@ -1,17 +1,16 @@
 # AWS AScan Todo Application
 
-A serverless todo application built using AWS Lambda, API Gateway, and DynamoDB.
+A serverless todo application built using AWS Lambda, IAM and DynamoDB.
+
+![alt text](assets/image.png)
 
 ## Overview
 
-This project implements a serverless todo application that allows users to create, read, update, and delete todo items. The application is containerized and deployed on AWS Lambda, with DynamoDB as the database backend.
+This project implements a serverless todo API that allows users to create, read, update, and delete todo items. The application is containerized and deployed on AWS Lambda, with DynamoDB as the database backend.
 
 ## Architecture
 
 The application follows a serverless architecture with the following components:
-
-<!-- - **Frontend**: Web interface for interacting with the todo application -->
-<!-- - **API Gateway**: RESTful API endpoints to manage todo items -->
 - **AWS Lambda**: Serverless functions to process API requests
 - **DynamoDB**: NoSQL database to store todo items
 - **Amazon ECR**: Container registry to store the application Docker image
@@ -76,9 +75,8 @@ The application provides the following API endpoints:
 POST /todos
 {
   "title": "Complete documentation",
-  "description": "Finish the README.md file",
-  "dueDate": "2023-06-30",
-  "completed": false
+  "done": false,
+  "priority": 1,
 }
 ```
 
@@ -87,10 +85,8 @@ POST /todos
 {
   "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "title": "Complete documentation",
-  "description": "Finish the README.md file",
-  "dueDate": "2023-06-30",
-  "completed": false,
-  "createdAt": "2023-06-20T12:00:00Z"
+  "done": false,
+  "priority": 2,
 }
 ```
 
@@ -109,11 +105,3 @@ Common issues and their solutions:
 - **Container fails to start**: Verify environment variables are properly set
 - **CI pipeline fails**: Ensure AWS credentials are properly configured in GitHub secrets
 - **Infrastructure deployment fails**: Check the workflow logs in the `infra-aws-ascan` repository
-
-## Contributors
-
-- Your development team
-
-## License
-
-[Insert license information]
