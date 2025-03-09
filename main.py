@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 from mangum import Mangum
 import boto3
 from boto3.dynamodb.conditions import Key
+import os
 
 app = FastAPI()
 handler = Mangum(app, lifespan="off")
@@ -42,64 +43,75 @@ all_todos = [
     Todo(id=5, title="Estudar Flask", done=False, priority=Priority.LOW),
 ]
 
-# Create a DynamoDB client using the default credentials and region
+dynamodb = boto3.resource("dynamodb")
 
+#DYNAMO_TABLE_NAME environment variable set by lambda IaC
+table = dynamodb.Table(os.environ["DYNAMO_TABLE_NAME"])
 
-# table = dynamodb.Table("todos")
-
-@app.get("/")
+@app.get("/" , response_model=List[Todo])
 def read_root():
-    dynamodb = boto3.resource("dynamodb")
-    table = dynamodb.Table("todo-ascan-table")
-    response = table.get_item(Key={"TaskId": 1})
-    if "Item" in response:
-        return response["Item"]["Task"]
-    else:
-        return "Task not found" 
+    response = table.scan()
+    return response["Items"]
 
-@app.get('/todos',response_model=List[Todo])
-def get_todos():
-    return all_todos
 
 @app.get('/todos/{id}', response_model=Todo)
 def get_todo( id: int ):
+    response = table.get_item(Key={"id": id})
+    if "Item" in response:
+        return {
+            "id": response["Item"]["id"],
+            "title": response["Item"]["title"],
+            "done": response["Item"]["done"],
+            "priority": response["Item"]["priority"]
+        }
+    else:
+        return "Task not found"
+
+# function that loops through all the todos and returns the todo with the highest id
+def get_highest_id():
+    all_todos = table.scan()["Items"]
+    highest = 0
     for todo in all_todos:
-        if todo.id == id:
-            return todo
-        
+        if todo["id"] > highest:
+            highest = todo["id"]
+    return highest+1 
+
+
 @app.post('/todos', response_model=List[Todo])
 def create_todo(todo: TodoCreate):
 
-    new_todo_id = max( todo.id for todo in all_todos ) + 1 
-
     new_todo = Todo(
-        id=new_todo_id,
+        id=get_highest_id(),
         title=todo.title,
         done=todo.done,
         priority=todo.priority
     )
 
-    all_todos.append(new_todo)
-    return all_todos
+    table.put_item(Item=new_todo.model_dump())
+    return table.scan()["Items"]
 
 @app.put('/todos/{id}', response_model=Todo)
 def update_todo( id: int, update_todo: TodoUpdate):
-    for todo in all_todos:
-        if todo.id == id:
-            if update_todo.title is not None:
-                todo.   title = update_todo.title
-            if update_todo.done is not None:
-                todo.done = update_todo.done
-            if update_todo.priority is not None:
-                todo.priority = update_todo.priority
-            return todo
-    raise HTTPException(status_code=404, detail="Todo não encontrado")
+
+    response = table.get_item(Key={"id": id})
+
+    response["id"] = id
+
+    if update_todo.title is not None:
+        response["title"] = update_todo.title
+    if update_todo.done is not None:
+        response["done"] = update_todo.done
+    if update_todo.priority is not None:
+        response["priority"] = update_todo.priority
+
+    table.put_item(Item=response)
+    return response
+        
+    # raise HTTPException(status_code=404, detail="Todo não encontrado")
 
 @app.delete('/todos/{id}')
 def delete_todo( id: int ):
-    for todo in all_todos:
-        if todo.id == id:
-            all_todos.remove(todo)
-            return all_todos
-    raise HTTPException(status_code=404, detail="Todo não encontrado")
+    table.delete_item(Key={"id": id})
+    return table.scan()["Items"]
+    # raise HTTPException(status_code=404, detail="Todo não encontrado")
 
