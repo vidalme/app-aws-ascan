@@ -34,15 +34,6 @@ class TodoUpdate(BaseModel):
     done: Optional[bool] = Field(None, description="Tarefa concluída ou não")
     priority: Optional[Priority] = Field(None, description="Prioridade da tarefa")
 
-
-all_todos = [
-    Todo(id=1, title="Fazer compras", done=False, priority=Priority.HIGH),
-    Todo(id=2, title="Estudar FastAPI", done=False, priority=Priority.MEDIUM),
-    Todo(id=3, title="Estudar Python", done=False, priority=Priority.MEDIUM),
-    Todo(id=4, title="Estudar Django", done=False, priority=Priority.HIGH),
-    Todo(id=5, title="Estudar Flask", done=False, priority=Priority.LOW),
-]
-
 dynamodb = boto3.resource("dynamodb")
 
 #DYNAMO_TABLE_NAME environment variable set by lambda IaC
