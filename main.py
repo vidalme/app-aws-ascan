@@ -67,7 +67,7 @@ def get_todo( id: int ):
     else:
         return "Task not found"
 
-# function that loops through all the todos and returns the todo with the highest id
+# function that loops through all the todos and returns the todo with the highest id value
 def get_highest_id():
     all_todos = table.scan()["Items"]
     highest = 0
