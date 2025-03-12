@@ -9,6 +9,7 @@ import os
 
 app = FastAPI()
 handler = Mangum(app, lifespan="off")
+
 class Priority(IntEnum):
     LOW = 3
     MEDIUM = 2
